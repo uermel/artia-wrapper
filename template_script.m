@@ -19,12 +19,13 @@ params.projectDir = '/home/Group/Share/nap_processing/test_1k_64'; % Project dir
 % Prepare motl
 motl = emread('/home/Group/Share/nap_processing/test_1k_64/tomo220-366_motl_64_5.em');
 motl(7, :) = motl(5, :);
+motl = motl(:, motl(5, :) ~= 302);
 %motl(17:19, :) = randomEuler(size(motl, 2));
 %num = randperm(size(motl, 2));
 %motl = motl(:, num(1:1000));
 tomonums = unique(motl(5, :));
-emwrite(motl, '/home/Group/Share/nap_processing/test_1k_64/modified_motl4.em');
-params.motl = '/home/Group/Share/nap_processing/test_1k_64/modified_motl4.em'; % Final used motl
+emwrite(motl, '/home/Group/Share/nap_processing/test_1k_64/modified_motl5.em');
+params.motl = '/home/Group/Share/nap_processing/test_1k_64/modified_motl5.em'; % Final used motl
 params.tomoList = {}; % List of volumes
 params.markerList = {}; % List of markers
 params.orderList = {}; % List of tilt orders
@@ -40,7 +41,19 @@ for i = 1:numel(tomonums)
     marker = artia.marker.read(cfg.MarkerFile);
     params.minAng{t} = round(min(marker.ali(1, :, 1)));
     params.maxAng{t} = round(max(marker.ali(1, :, 1)));
-    params.orderList{t} = artia.util.dose_symmetric_tilts(20, 3, -1);
+    
+    % Check that order corresponds to projection number
+    complete_order = artia.util.dose_symmetric_tilts(20, 3, -1);
+    order = [];
+    head = artia.mrc.read_header(cfg.ProjectionFile);
+    tilts = head.extended.tiltAngle(1:head.nz);
+    
+    for j = 1:numel(complete_order)
+        if ismember(complete_order(j), tilts)
+            order = [order complete_order(j)];
+        end
+    end
+    params.orderList{t} = order;
 end
 
 % Alignment
@@ -63,14 +76,14 @@ params.adaptiveSigma = [1 1 1 1 1 1 1 1 1 1]; % Adjust sigma based on FSC (1 for
 params.sigmaFudge = 0.75; % If adaptiveSigma is used the final sigma will be sigmaFudge * resolution determined by FSC
 params.useCustomMask = [0 0 0 0 0 0 0 0 0 0]; % Use an additional custom Mask (not recommended)
 params.customMaskName = ''; % Filename of custom mask
-params.prefix = {'test9', 'test9', 'test9', 'test9', 'test9', 'test9', 'test9', 'test9', 'test9', 'test9'}; % Prefix for this iteration, files will be organized accordingly
+params.prefix = {'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1'}; % Prefix for this iteration, files will be organized accordingly
 params.STAMPI = '/home/uermel/Programs/artia-build/PhaseCorrelation/Artiatomi/build/'; %  Folder where STA can be found
 params.CHIMX = '~/Programs/chimerax-1.0/bin/ChimeraX'; % ChimeraX executable
 params.mpiOpts = '-n 4'; % Ignore this
 params.runRemote = true; % When it should be run on a GPU machine
 params.remoteHost = 'romulan.local'; % Host name or IP address 
 params.skipExtract = true; % Particles should not be extracted on running init
-params.doseWeight = false; % Use dose weighted wedges
+params.doseWeight = true; % Use dose weighted wedges
 params.bestParticleRatio = [1 1 1 1 1 1 1 1 1 1]; % Best particle ratio per iteration 
 params.useStartRef = false; % Use a starting reference for the first iteration
 params.startRef = ''; % Location of start ref
