@@ -8,6 +8,7 @@ function p = avg_iniths(params)
     
     % Get tomogram numbers
     p.tomoNums = unique(motl(5, :));%find(~cellfun(@isempty, p.tomoList));
+    p.wedgeNums = unique(motl(7, :));
     
     % Figure out pixelsize and boxSize
     p.angPix = p.pixelSize .* p.bin;
@@ -58,7 +59,7 @@ function p = avg_iniths(params)
     emwrite(maskCC, maskCCName);
     
     % Make wedges
-    for i = p.tomoNums
+    for i = p.wedgeNums
         wedgeName = sprintf('%s%d.em', it.wedgePre, i);
         if p.doseWeight
             wedge = artia.wedge.dose_weighted(emread(p.markerList{i}), p.orderList{i}, p.dosePerTilt * 4, p.angPix, p.boxDim(1));
