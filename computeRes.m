@@ -41,11 +41,16 @@ function [res_ang, res_pix, x_1, x_2] = computeRes(c, apix, criterion)
         end
         x_1 = x_2 + 1;
         y1 = y2 + 1;
-        
-        x1 = steps(y1); %c(y1, 3);
-        x2 = steps(y2); %c(y2, 3);
-        
-        res_ang = (x1 + (x2 - x1) / (c(y2) - c(y1)) * (criterion - c(y1))) * apix;
-        res_pix = (x_2 + (1) * (criterion - c(y2)) / (c(y1) - c(y2)));
+         
+        if y1 > numel(steps) % Resolution until nyquist
+            res_ang = steps(end) * apix;
+            res_pix = numel(steps);
+        else
+            x1 = steps(y1); %c(y1, 3);
+            x2 = steps(y2); %c(y2, 3);
+
+            res_ang = (x1 + (x2 - x1) / (c(y2) - c(y1)) * (criterion - c(y1))) * apix;
+            res_pix = (x_2 + (1) * (criterion - c(y2)) / (c(y1) - c(y2)));
+        end
     end
 end
