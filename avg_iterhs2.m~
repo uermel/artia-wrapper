@@ -62,7 +62,7 @@ function avg_iterhs2(params, target)
             % Prepare cfg
             cfgName = it.cfgNames{j+1, h};
 
-            cfg.CudaDeviceID = params.deviceIDs;
+            cfg.CudaDeviceID = '0 1 2 3';
             cfg.MotiveList = it.motlPres{j+1, h};
             cfg.Reference = it.refPres{j+1, h};
             cfg.WedgeFile = it.wedgePre;
@@ -94,7 +94,7 @@ function avg_iterhs2(params, target)
 
             % Execute SubTomogramAverageMPI
             fprintf('Running subiter %d of %d in main iter %d for hs %s\n', j+1, p.refineIter(target)+1, target, hs);
-            artia.mpi.run('SubTomogramAverageMPI', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'suppressOutput', false, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost, 'hostfile', params.mpiHostfile)
+            artia.mpi.run('SubTomogramAverageMPI', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'suppressOutput', false, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost)
             %executeMPI(p.STAMPI, p.mpiOpts, 'SubTomogramAverageMPI', cfgName, p.projectDir)
             cleanMPI(p.projectDir, it.pre, [target, j+2], it.sampling, p.hsetNames{h});
             
@@ -144,7 +144,8 @@ function avg_iterhs2(params, target)
     for h = 1:2
         cfgName = it.cfgNames{1, h};
         
-        artia.mpi.run('AddParticles', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost, 'hostfile', params.mpiHostfile)
+        artia.mpi.run('AddParticles', 4, cfgName, 'execDir', p.STAMPI, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost)
+        %executeMPI(p.STAMPI, p.mpiOpts, 'AddParticles', cfgName, p.projectDir)
         cleanMPI(p.projectDir, it.pre, [target, 1], it.sampling, p.hsetNames{h});
         
         copyfile(it.refNames{1, h}, it.fscRefName{h})

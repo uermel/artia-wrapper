@@ -77,9 +77,19 @@ function p = avg_iniths(params)
         hsetMotls{2} = motl(:, 2:2:end);
         hsetMotls{2}(4, :) = 2;
     else
-        hsetMotls{1} = motl(:, motl(4, :) == 1);
-        hsetMotls{2} = motl(:, motl(4, :) == 2);
-    end
+        hsetMotls{1} = motl(:, motl(4, :) ==);
+    
+    % Iteration struct
+    %it = struct();
+    %it.maskName = {};
+    %it.maskCCName = {};
+    %it.motlPre = {};
+    %it.refPre = {};
+    %it.cfgPre = {};
+    %it.aliMotlName = {};
+    %it.aliRefName = {};
+    %it.fscMotlName = {};
+    %it.fscRefName = {};
     
     % Initialize average for both half sets
     for h = 1:2
@@ -110,7 +120,7 @@ function p = avg_iniths(params)
         
         % Write cfg
         cfgName = it.cfgNames{1, h};
-        cfg.CudaDeviceID = params.deviceIDs;
+        cfg.CudaDeviceID = '0 1 2 3';
         cfg.MotiveList = it.motlPres{1, h};
         cfg.Reference = it.refPres{1, h};
         cfg.WedgeFile = it.wedgePre;
@@ -140,7 +150,7 @@ function p = avg_iniths(params)
         struct2cfg(cfg, cfgName);
 
         % Execute AddParticles
-        artia.mpi.run('AddParticles', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'runRemote', params.runRemote, 'remoteHost', params.remoteHost, 'hostfile', params.mpiHostfile, 'suppressOutput', false)
+        artia.mpi.run('AddParticles', 4, cfgName, 'execDir', p.STAMPI, 'runRemote', params.runRemote, 'remoteHost', params.remoteHost, 'suppressOutput', false)
         %executeMPI(p.STAMPI, p.mpiOpts, 'AddParticles', cfgName, p.projectDir)
         cleanMPI(p.projectDir, it.pre, [0, 1], it.sampling, p.hsetNames{h});
  
@@ -176,7 +186,7 @@ function p = avg_iniths(params)
     for h = 1:2
         cfgName = it.cfgNames{1, h};
         
-        artia.mpi.run('AddParticles', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost, 'hostfile', params.mpiHostfile)
+        artia.mpi.run('AddParticles', 4, cfgName, 'execDir', p.STAMPI, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost)
         %executeMPI(p.STAMPI, p.mpiOpts, 'AddParticles', cfgName, p.projectDir)
         cleanMPI(p.projectDir, it.pre, [0, 1], it.sampling, p.hsetNames{h});
         

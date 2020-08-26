@@ -79,8 +79,8 @@ params.customMaskName = ''; % Filename of custom mask
 params.prefix = {'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1', 'test1'}; % Prefix for this iteration, files will be organized accordingly
 params.STAMPI = '/home/uermel/Programs/artia-build/PhaseCorrelation/Artiatomi/build/'; %  Folder where STA can be found
 params.CHIMX = '~/Programs/chimerax-1.0/bin/ChimeraX'; % ChimeraX executable
-params.mpiNodes = 4; % Ignore this
-params.mpiHostfile = '';
+params.mpiOpts = '-n 4'; % Ignore this
+params.hosts
 params.runRemote = true; % When it should be run on a GPU machine
 params.remoteHost = 'romulan.local'; % Host name or IP address 
 params.skipExtract = true; % Particles should not be extracted on running init
@@ -88,8 +88,6 @@ params.doseWeight = true; % Use dose weighted wedges
 params.bestParticleRatio = [1 1 1 1 1 1 1 1 1 1]; % Best particle ratio per iteration 
 params.useStartRef = false; % Use a starting reference for the first iteration
 params.startRef = ''; % Location of start ref
-params.usePresetHalfsets = false;
-params.deviceIDs = '0 1 2 3 0 1 2 3';
 
 params = avg_iniths(params) % Prepares everything
 

@@ -41,7 +41,7 @@ function [pit, it] = prepareIteration(params, source, target)
         hs = p.hsetNames{h};
         cfgName = it.cfgNames{1, h};
 
-        cfg.CudaDeviceID = '0 1 2 3';
+        cfg.CudaDeviceID = params.deviceIDs;
         cfg.MotiveList = it.motlPres{1, h};
         cfg.Reference = it.refPres{1, h};
         cfg.WedgeFile = it.wedgePre;
@@ -72,7 +72,7 @@ function [pit, it] = prepareIteration(params, source, target)
         struct2cfg(cfg, cfgName);
 
         % Execute AddParticles
-        artia.mpi.run('AddParticles', 4, cfgName, 'execDir', p.STAMPI, 'suppressOutput', false, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost)
+        artia.mpi.run('AddParticles', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'suppressOutput', false, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost, 'hostfile', params.mpiHostfile)
         %executeMPI(p.STAMPI, p.mpiOpts, 'AddParticles', cfgName, p.projectDir)
         cleanMPI(p.projectDir, it.pre, [target, 1], it.sampling, p.hsetNames{h});
         
