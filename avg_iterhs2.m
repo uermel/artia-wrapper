@@ -66,8 +66,9 @@ function avg_iterhs2(params, target)
             cfg.MotiveList = it.motlPres{j+1, h};
             cfg.Reference = it.refPres{j+1, h};
             cfg.WedgeFile = it.wedgePre;
+            cfg.SingleWedge = false;
             cfg.Particles = p.partPre;
-            cfg.WedgeIndices = num2str(p.wedgeNums);
+            %cfg.WedgeIndices = num2str(p.wedgeNums);
             cfg.Classes = '';
             cfg.MultiReference = '';
             cfg.PathWin = '';
