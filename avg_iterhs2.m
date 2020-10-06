@@ -66,7 +66,7 @@ function avg_iterhs2(params, target)
             cfg.MotiveList = it.motlPres{j+1, h};
             cfg.Reference = it.refPres{j+1, h};
             cfg.WedgeFile = it.wedgePre;
-            cfg.SingleWedge = false;
+            cfg.SingleWedge = 'false';
             cfg.Particles = p.partPre;
             %cfg.WedgeIndices = num2str(p.wedgeNums);
             cfg.Classes = '';
@@ -118,6 +118,10 @@ function avg_iterhs2(params, target)
     
     % Align first half set to center of mass or reference volume
     switch p.aliType
+        case 'none'
+            initialTransform = struct();
+            initialTransform.shifts = [0 0 0];
+            initialTransform.angles = [0 0 0];
         case 'cm'
             initialTransform = centerTrans(it.aliRefName{1}, it.combinedMaskName, 'neg', 'rc');
         case 'ref'

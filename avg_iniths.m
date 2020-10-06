@@ -114,7 +114,7 @@ function p = avg_iniths(params)
         cfg.MotiveList = it.motlPres{1, h};
         cfg.Reference = it.refPres{1, h};
         cfg.WedgeFile = it.wedgePre;
-        cfg.SingleWedge = false;
+        cfg.SingleWedge = 'false';
         cfg.Particles = p.partPre;
         %cfg.WedgeIndices = num2str(p.wedgeNums);
         cfg.Classes = '';
@@ -151,6 +151,13 @@ function p = avg_iniths(params)
     
     % Align first half set to center of mass or reference volume
     switch p.aliType
+        case 'none'
+            initialTransform1 = struct();
+            initialTransform1.shifts = [0 0 0];
+            initialTransform1.angles = [0 0 0];
+            initialTransform2 = struct();
+            initialTransform2.shifts = [0 0 0];
+            initialTransform2.angles = [0 0 0];
         case 'cm'
             initialTransform1 = centerTrans(it.aliRefName{1}, it.combinedMaskName, 'neg', 'rc');
             initialTransform2 = centerTrans(it.aliRefName{2}, it.combinedMaskName, 'neg', 'rc');
