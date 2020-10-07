@@ -79,6 +79,16 @@ function [pit, it] = prepareIteration(params, source, target)
         
     end
     
+    % Prevent divergent orientations by band-limited avg of intial refs
+    if p.bandLimAvg
+        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        vol1 = emread(it.refNames{1, 1});
+        vol2 = emread(it.refNames{1, 2});
+        [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
+        emwrite(avol1, it.refNames{1, 1});
+        emwrite(avol2, it.refNames{1, 2});
+    end
+    
     % Create and save adaptive masks if necessary
     if p.adaptiveMasking(target)
         for h = 1:2

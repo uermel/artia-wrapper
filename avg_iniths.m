@@ -149,6 +149,16 @@ function p = avg_iniths(params)
         copyfile(refName, it.aliRefName{h})
     end 
     
+    % Prevent divergent orientations by band-limited avg of final refs
+    if p.bandLimAvg
+        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        vol1 = emread(it.aliRefName{1});
+        vol2 = emread(it.aliRefName{2});
+        [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
+        emwrite(avol1, it.aliRefName{1});
+        emwrite(avol2, it.aliRefName{2});
+    end
+    
     % Align first half set to center of mass or reference volume
     switch p.aliType
         case 'none'
@@ -177,10 +187,7 @@ function p = avg_iniths(params)
         
         emwrite(motls{h}, it.fscMotlName{h});
     end
-    
-    % Re-extract and run AddParticles again
-    %extractWriteParts([motls{1} motls{2}], 1, p.tomoList, p.boxRad(1), 1, 1, 0, p.partPre);
-    
+        
     for h = 1:2
         cfgName = it.cfgNames{1, h};
         
@@ -190,6 +197,16 @@ function p = avg_iniths(params)
         
         copyfile(it.refNames{1, h}, it.fscRefName{h})
     end
+    
+    % Prevent divergent orientations by band-limited avg of transformed refs
+%     if p.bandLimAvg
+%         pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+%         vol1 = emread(it.fscRefName{1});
+%         vol2 = emread(it.fscRefName{2});
+%         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
+%         emwrite(avol1, it.fscRefName{1});
+%         emwrite(avol2, it.fscRefName{2});
+%     end
     
     % Compute FSC and masks
     odd = emread(it.fscRefName{1});
