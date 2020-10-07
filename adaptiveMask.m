@@ -17,6 +17,8 @@ function mask = adaptiveMask(referenceFile, maskFile, threshold, dilationWidth, 
     
     % Filter and binarize
     reff = four_filter(ref, LP, 0, LPS, 0).*mask;
+    reff = reff - mean(reff(:));
+    reff = reff ./ std(reff(:));
     ref_binarized = reff < threshold;
 
     % Euclidean Distance transform
