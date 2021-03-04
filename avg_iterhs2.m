@@ -33,7 +33,7 @@ function avg_iterhs2(params, target)
         
         % Sigma
         if p.adaptiveSigma(target)
-            sigma = pit.resolution.res.pix.loose * params.sigmaFudge;
+            sigma = pit.resolution.res.pix.unmasked * params.sigmaFudge;
             it.Sigma = sigma;
         else
             sigma = params.Sigma(target);
@@ -54,9 +54,9 @@ function avg_iterhs2(params, target)
             else
                 factor = 2.^j;
                 angIncr = num2str(p.AngIncr(target)/factor);
-                angIter = '2';
+                angIter = '1';
                 phiAngIncr = num2str(p.PhiAngIncr(target)/factor);
-                phiAngIter = '2';
+                phiAngIter = '1';
             end
 
             % Prepare cfg
@@ -82,14 +82,17 @@ function avg_iterhs2(params, target)
             cfg.AngIncr = angIncr;
             cfg.PhiAngIter = phiAngIter;
             cfg.PhiAngIncr = phiAngIncr;
-            cfg.LowPass = num2str(sigma);%num2str(params.LowPass(target)); %num2str(sigma);%
+            cfg.LowPass = num2str(sigma);%num2str(params.LowPass(target));
             cfg.HighPass = num2str(params.HighPass(target));
-            cfg.Sigma = '0';% num2str(sigma);
+            cfg.Sigma = '0';%num2str(sigma);
             cfg.ClearAngles = 'false';
-            cfg.ClearAnglesIteration = '1';
             cfg.BestParticleRatio = num2str(p.bestParticleRatio(target));
-            cfg.ApplySymmetry = 'false';
             cfg.CouplePhiToPsi = 'true';
+            
+            % Symmetry
+            cfg.ApplySymmetry = 'transform';
+            symFile = getSymTransforms(p.symGroup);
+            cfg.SymmetryFile = symFile;
 
             % Write cfg
             struct2cfg(cfg, cfgName);
@@ -163,18 +166,9 @@ function avg_iterhs2(params, target)
         artia.mpi.run('AddParticles', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost, 'hostfile', params.mpiHostfile)
         cleanMPI(p.projectDir, it.pre, [target, 1], it.sampling, p.hsetNames{h});
         
-        copyfile(it.refNames{1, h}, it.fscRefName{h})
+        copyfile(it.refNames{1, h}, it.fscRefNameSym{h})
+        copyfile(it.refNSNames{1, h}, it.fscRefName{h})
     end
-    
-    % Prevent divergent orientations by band-limited avg of transformed refs
-%     if p.bandLimAvg
-%         pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
-%         vol1 = emread(it.fscRefName{1});
-%         vol2 = emread(it.fscRefName{2});
-%         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
-%         emwrite(avol1, it.fscRefName{1});
-%         emwrite(avol2, it.fscRefName{2});
-%     end
     
     % Add all particles to get the full sum
     fullMotl = [motls{1} motls{2}];
@@ -219,9 +213,11 @@ function avg_iterhs2(params, target)
 %     %cleanMPI(p.projectDir, it.pre, [target, 1], it.sampling, p.hsetNames{h});
         
     % Compute FSC
+    odd_sym = emread(it.fscRefNameSym{1});
+    even_sym = emread(it.fscRefNameSym{2});
     odd = emread(it.fscRefName{1});
     even = emread(it.fscRefName{2});
-    tot = odd + even;
+    tot = odd_sym + even_sym;
     
     odd = odd - mean(odd(:));
     odd = odd ./ std(odd(:));

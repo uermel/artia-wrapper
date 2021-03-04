@@ -14,6 +14,12 @@ function [fullName, prefix] = nameOf(type, pdir ,pre, iters, sampling, halfset, 
         case 'r' % ref
             base = sprintf('ref/%s/bin%d/ref_%s', pre, sampling, halfset);
             
+        case 'rns' % ref
+            base = sprintf('ref/%s/bin%d/ref_%s', pre, sampling, halfset);
+            
+        case 'rmrc' % ref - mrc format
+            base = sprintf('ref/%s/bin%d/ref_%s', pre, sampling, halfset);
+            
         case 'c' % cfg
             base = sprintf('cfg/%s/bin%d/cfg_%s', pre, sampling, halfset);
             
@@ -64,15 +70,19 @@ function [fullName, prefix] = nameOf(type, pdir ,pre, iters, sampling, halfset, 
             
     end
     
-    iterFmt = ['%s' repmat('_%d', 1, numel(iters))];
+    if strcmp(type, 'rns')
+        iterFmt = '%s_%d_noSymm_%d';
+    else
+        iterFmt = ['%s' repmat('_%d', 1, numel(iters))];
+    end
     preFmt = ['%s' repmat('_%d', 1, numel(iters)-1)];
     iterBase = sprintf(iterFmt, base, iters);
     prefix = [pdir sprintf(iterFmt, base, iters(1:end-1))];
     
     switch type
-        case {'m', 'r', 'w', 'lma', 'cma', 'ccm', 'ama', 'fma', 'mc', 'fm', 'rse', 'fse'}
+        case {'m', 'r', 'w', 'lma', 'cma', 'ccm', 'ama', 'fma', 'mc', 'fm', 'rse', 'fse', 'rns'}
             ext = '.em';
-        case {'rsm', 'fsm'}
+        case {'rsm', 'fsm', 'rmrc'}
             ext = '.mrc';
         case 'ffn'
             ext = '.fig';

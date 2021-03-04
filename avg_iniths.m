@@ -58,16 +58,18 @@ function p = avg_iniths(params)
     maskCCName = it.maskCCName; 
     emwrite(maskCC, maskCCName);
     
-    % Make wedges
-    for i = p.wedgeNums
-        wedgeName = sprintf('%s%d.em', it.wedgePre, i);
-        if p.doseWeight
-            wedge = artia.wedge.dose_weighted(nameOrFile(p.markerList{i}, 'em'), nameOrFile(p.orderList{i}, 'em'), p.dosePerTilt * 4, p.angPix, p.boxDim(1));
-        else
-            wedge = createWedge(p.boxDim, p.minAng{i}, p.maxAng{i});
-        end
-        emwrite(wedge, wedgeName);  
-    end
+    % Make wedges if necessary
+    if ~params.skipWedge
+		for i = p.wedgeNums
+		    wedgeName = sprintf('%s%d.em', it.wedgePre, i);
+		    if p.doseWeight
+		        wedge = artia.wedge.dose_weighted(emread(p.markerList{i}), p.orderList{i}, p.dosePerTilt * 4, p.angPix, p.boxDim(1));
+		    else
+		        wedge = createWedge(p.boxDim, p.minAng{i}, p.maxAng{i});
+		    end
+		    emwrite(wedge, wedgeName);  
+		end
+	end
     
     % Prepare half sets
     if ~params.usePresetHalfsets
@@ -116,6 +118,7 @@ function p = avg_iniths(params)
         cfg.WedgeFile = it.wedgePre;
         cfg.SingleWedge = 'false';
         cfg.Particles = p.partPre;
+        %cfg.WedgeIndices = num2str(p.wedgeNums);
         cfg.Classes = '';
         cfg.MultiReference = '';
         cfg.PathWin = '';
@@ -143,7 +146,8 @@ function p = avg_iniths(params)
         artia.mpi.run('AddParticles', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'runRemote', params.runRemote, 'remoteHost', params.remoteHost, 'hostfile', params.mpiHostfile, 'suppressOutput', false)
         %executeMPI(p.STAMPI, p.mpiOpts, 'AddParticles', cfgName, p.projectDir)
         cleanMPI(p.projectDir, it.pre, [0, 1], it.sampling, p.hsetNames{h});
- 
+        
+        % Copy files to storage
         copyfile(motlName, it.aliMotlName{h})
         copyfile(refName, it.aliRefName{h})
     end 
@@ -158,6 +162,12 @@ function p = avg_iniths(params)
         emwrite(avol2, it.aliRefName{2});
     end
     
+    % Convert to MRC for relion tools
+    for h = 1:2
+        temp = emread(it.aliRefName{h});
+        mrcWriteUE(temp.*-1, it.aliRefMRCName{h}, 'float', p.angPix);
+    end
+    
     % Align first half set to center of mass or reference volume
     switch p.aliType
         case 'none'
@@ -167,6 +177,8 @@ function p = avg_iniths(params)
             initialTransform2 = struct();
             initialTransform2.shifts = [0 0 0];
             initialTransform2.angles = [0 0 0];
+        case 'sym'
+            [sym_cm_transform, sym_rot_transform] = alignSym(it.aliRefMRCName{1}, p.symGroup, p.RELIONBIN, 'SuppressOutput', false);
         case 'cm'
             initialTransform1 = centerTrans(it.aliRefName{1}, it.combinedMaskName, 'neg', 'rc');
             initialTransform2 = centerTrans(it.aliRefName{2}, it.combinedMaskName, 'neg', 'rc');
@@ -186,25 +198,27 @@ function p = avg_iniths(params)
         
         emwrite(motls{h}, it.fscMotlName{h});
     end
-        
+    
+    % Run AddParticles again with updated poses
     for h = 1:2
         cfgName = it.cfgNames{1, h};
         
         artia.mpi.run('AddParticles', params.mpiNodes, cfgName, 'execDir', p.STAMPI, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost, 'hostfile', params.mpiHostfile)
+        %executeMPI(p.STAMPI, p.mpiOpts, 'AddParticles', cfgName, p.projectDir)
         cleanMPI(p.projectDir, it.pre, [0, 1], it.sampling, p.hsetNames{h});
         
         copyfile(it.refNames{1, h}, it.fscRefName{h})
     end
     
     % Prevent divergent orientations by band-limited avg of transformed refs
-%     if p.bandLimAvg
-%         pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
-%         vol1 = emread(it.fscRefName{1});
-%         vol2 = emread(it.fscRefName{2});
-%         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
-%         emwrite(avol1, it.fscRefName{1});
-%         emwrite(avol2, it.fscRefName{2});
-%     end
+    if p.bandLimAvg
+        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        vol1 = emread(it.fscRefName{1});
+        vol2 = emread(it.fscRefName{2});
+        [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
+        emwrite(avol1, it.fscRefName{1});
+        emwrite(avol2, it.fscRefName{2});
+    end
     
     % Compute FSC and masks
     odd = emread(it.fscRefName{1});
@@ -226,6 +240,7 @@ function p = avg_iniths(params)
     it.resolution = computeTrueFSC(even, odd, looseMask, fscTight, p.angPix, 0.143);
     fi = plotFSC(it.resolution, {'unmasked', 'loose', 'tight'}, p.boxDim(1), p.angPix, 'iter 0');
     savefig(fi, it.fscFigureName);
+    %[res, CC] = mapRes(it.fscRefName{1}, it.fscRefName{2}, it.maskName, p.angPix, p.boxRad(1), 0.5, 1);
     
     % Filter total sum to determined resolution for viewing
     % Choose the best resolution from unmasked, loose and adaptive mask.

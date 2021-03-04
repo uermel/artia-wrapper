@@ -66,8 +66,12 @@ function [pit, it] = prepareIteration(params, source, target)
         cfg.Sigma = '0';%num2str(p.Sigma(target));
         cfg.ClearAngles = 'false';
         cfg.BestParticleRatio = num2str(p.bestParticleRatio(target));
-        cfg.ApplySymmetry = 'false';
         cfg.CouplePhiToPsi = 'true';
+        
+        % Symmetry
+        cfg.ApplySymmetry = 'transform';
+        symFile = getSymTransforms(p.symGroup);
+        cfg.SymmetryFile = symFile;
 
         % Write cfg
         struct2cfg(cfg, cfgName);
@@ -97,7 +101,7 @@ function [pit, it] = prepareIteration(params, source, target)
             vol = vol ./ std(vol(:));
             
             filter = pit.resolution.res.pix.unmasked;
-            adaptMask = adaptiveMask(vol, pit.combinedMaskName, -3, 5, 5, 0.01, filter, 2, 0);
+            adaptMask = adaptiveMask(vol, pit.combinedMaskName, -4, 2, 3, 0.01, filter, 2, 0);
             emwrite(adaptMask, it.aliMaskNames{h});
         end
     end

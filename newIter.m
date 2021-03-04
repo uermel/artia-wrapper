@@ -60,14 +60,19 @@ function it = newIter(num, prefix, sampling, subiters, hsetNames, pdir)
         for i = 1:subiters+2
             [it.motlNames{i, h}, it.motlPres{i, h}] = nameOf('m', pdir, prefix, [num, i], sampling, halfset);
             [it.refNames{i, h}, it.refPres{i, h}] = nameOf('r', pdir, prefix, [num, i], sampling, halfset);
+            [it.refNSNames{i, h}, it.refNSPres{i, h}] = nameOf('rns', pdir, prefix, [num, i], sampling, halfset);
             [it.cfgNames{i, h}, it.cfgPres{i, h}] = nameOf('c', pdir, prefix, [num, i], sampling, halfset);
         end
         it.aliMaskNames{h} = nameOf('ama', pdir, prefix, num, sampling, halfset);
         [~, it.wedgePre] = nameOf('w', pdir, prefix, num, sampling);
         it.aliMotlName{h} = nameOf('m', pdir, prefix, num, sampling, halfset, 'Ali');
         it.aliRefName{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'Ali');
+        it.aliRefNameSym{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'AliSym');
+        it.aliRefMRCName{h} = nameOf('rmrc', pdir, prefix, num, sampling, halfset, 'Ali');
+        it.aliRefMRCNameSym{h} = nameOf('rmrc', pdir, prefix, num, sampling, halfset, 'AliSym');
         it.fscMotlName{h} = nameOf('m', pdir, prefix, num, sampling, halfset, 'FSC');
         it.fscRefName{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'FSC');
+        it.fscRefNameSym{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'FSCSym');
     end
 
     % Ensure the directory tree exists
