@@ -82,10 +82,11 @@ function avg_iterhs2(params, target)
             cfg.AngIncr = angIncr;
             cfg.PhiAngIter = phiAngIter;
             cfg.PhiAngIncr = phiAngIncr;
-            cfg.LowPass = num2str(params.LowPass(target));
+            cfg.LowPass = num2str(sigma);%num2str(params.LowPass(target)); %num2str(sigma);%
             cfg.HighPass = num2str(params.HighPass(target));
-            cfg.Sigma = num2str(sigma);
+            cfg.Sigma = '0';% num2str(sigma);
             cfg.ClearAngles = 'false';
+            cfg.ClearAnglesIteration = '1';
             cfg.BestParticleRatio = num2str(p.bestParticleRatio(target));
             cfg.ApplySymmetry = 'false';
             cfg.CouplePhiToPsi = 'true';

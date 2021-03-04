@@ -226,6 +226,7 @@ function p = avg_iniths(params)
     it.resolution = computeTrueFSC(even, odd, looseMask, fscTight, p.angPix, 0.143);
     fi = plotFSC(it.resolution, {'unmasked', 'loose', 'tight'}, p.boxDim(1), p.angPix, 'iter 0');
     savefig(fi, it.fscFigureName);
+    %[res, CC] = mapRes(it.fscRefName{1}, it.fscRefName{2}, it.maskName, p.angPix, p.boxRad(1), 0.5, 1);
     
     % Filter total sum to determined resolution for viewing
     % Choose the best resolution from unmasked, loose and adaptive mask.

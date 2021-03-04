@@ -13,10 +13,8 @@ function [res_ang, res_pix, x_1, x_2] = computeRes(c, apix, criterion)
 % SEE ALSO: compare
 
     s = numel(c);
-    y1 = s; % index of higher res
-    y2 = 0; % index of lower res
-    x_1 = s; % higher pixel res
-    x_2 = 0; % lower pixel res
+    y1 = s;
+    y2 = 0;
     
     steps = (2*s./(1:s));
     
@@ -41,18 +39,13 @@ function [res_ang, res_pix, x_1, x_2] = computeRes(c, apix, criterion)
                 x_2 = i;
             end
         end
-        
-        if y2 == 0
-            y2 = 1;
-            x_2 = 1;
-        end
-        
         y1 = y2 + 1;
          
         if y1 > numel(steps) % Resolution until nyquist
             res_ang = steps(end) * apix;
             res_pix = numel(steps);
         else
+            disp(y1)
             x_1 = x_2 + 1;
             
             x1 = steps(y1); %c(y1, 3);
