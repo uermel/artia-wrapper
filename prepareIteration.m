@@ -45,7 +45,7 @@ function [pit, it] = prepareIteration(params, source, target)
         cfg.MotiveList = it.motlPres{1, h};
         cfg.Reference = it.refPres{1, h};
         cfg.WedgeFile = it.wedgePre;
-        cfg.SingleWedge = false;
+        cfg.SingleWedge = 'false';
         cfg.Particles = p.partPre;
         %cfg.WedgeIndices = num2str(p.wedgeNums);
         cfg.Classes = '';
@@ -61,13 +61,17 @@ function [pit, it] = prepareIteration(params, source, target)
         cfg.AngIncr = '0';
         cfg.PhiAngIter = '0';
         cfg.PhiAngIncr = '0';
-        cfg.LowPass = num2str(p.LowPass(target));
+        cfg.LowPass = num2str(p.Sigma(target));%num2str(p.LowPass(target));
         cfg.HighPass = num2str(p.HighPass(target));
-        cfg.Sigma = num2str(p.Sigma(target));
+        cfg.Sigma = '0';%num2str(p.Sigma(target));
         cfg.ClearAngles = 'false';
         cfg.BestParticleRatio = num2str(p.bestParticleRatio(target));
-        cfg.ApplySymmetry = 'false';
         cfg.CouplePhiToPsi = 'true';
+        
+        % Symmetry
+        cfg.ApplySymmetry = 'transform';
+        symFile = getSymTransforms(p.symGroup);
+        cfg.SymmetryFile = symFile;
 
         % Write cfg
         struct2cfg(cfg, cfgName);
@@ -79,6 +83,16 @@ function [pit, it] = prepareIteration(params, source, target)
         
     end
     
+    % Prevent divergent orientations by band-limited avg of intial refs
+    if p.bandLimAvg
+        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        vol1 = emread(it.refNames{1, 1});
+        vol2 = emread(it.refNames{1, 2});
+        [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
+        emwrite(avol1, it.refNames{1, 1});
+        emwrite(avol2, it.refNames{1, 2});
+    end
+    
     % Create and save adaptive masks if necessary
     if p.adaptiveMasking(target)
         for h = 1:2
@@ -87,7 +101,7 @@ function [pit, it] = prepareIteration(params, source, target)
             vol = vol ./ std(vol(:));
             
             filter = pit.resolution.res.pix.unmasked;
-            adaptMask = adaptiveMask(vol, pit.combinedMaskName, -3, 5, 5, 0.01, filter, 2, 0);
+            adaptMask = adaptiveMask(vol, pit.combinedMaskName, -4, 2, 3, 0.01, filter, 2, 0);
             emwrite(adaptMask, it.aliMaskNames{h});
         end
     end

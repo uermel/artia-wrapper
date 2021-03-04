@@ -17,7 +17,7 @@ function [res_ang, res_pix, x_1, x_2] = computeRes(c, apix, criterion)
     y2 = 0;
     
     steps = (2*s./(1:s));
-    
+
     % In case the criterion is exactly matched
     exact = false;
     for i = 1:s
@@ -33,14 +33,25 @@ function [res_ang, res_pix, x_1, x_2] = computeRes(c, apix, criterion)
     
     % Otherwise
     if (~exact)
+        
+        % Init above nyquist
+        y1 = numel(steps) + 1;
+        x_1 = numel(steps) + 1;
+        
         for i = 1:s
-            if (c(i) > criterion)
-                y2 = i;
-                x_2 = i;
+            %if (c(i) > criterion)
+            %    y2 = i;
+            %    x_2 = i;
+            %end
+            
+            if c(i) < criterion
+                y1 = i;
+                x_1 = i;
+                break;
             end
         end
-        x_1 = x_2 + 1;
-        y1 = y2 + 1;
+        x_2 = x_1 - 1;
+        y2 = y1 - 1;
          
         if y1 > numel(steps) % Resolution until nyquist
             res_ang = steps(end) * apix;
