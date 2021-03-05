@@ -40,39 +40,40 @@ function it = newIter(num, prefix, sampling, subiters, hsetNames, pdir)
     it.fscFigureName = '';
     
     % Make the names
-    it.name = nameOf('i', pdir, prefix, num, sampling);
+    it.name = nameOf('iter', pdir, prefix, num, sampling);
+    
     for h = 1:2
         halfset = hsetNames{h};
-        it.looseMaskName = nameOf('lma', pdir, prefix, num, sampling);
-        it.customMaskName = nameOf('cma', pdir, prefix, num, sampling);
-        it.combinedMaskName = nameOf('ccm', pdir, prefix, num, sampling);
-        it.fscMaskName = nameOf('fma', pdir, prefix, num, sampling);
-        it.maskCCName = nameOf('mc', pdir, prefix, num, sampling);
+        it.looseMaskName = nameOf('looseMask', pdir, prefix, num, sampling);
+        it.customMaskName = nameOf('customMask', pdir, prefix, num, sampling);
+        it.combinedMaskName = nameOf('combinedMask', pdir, prefix, num, sampling);
+        it.fscMaskName = nameOf('fscMask', pdir, prefix, num, sampling);
+        it.maskCCName = nameOf('maskCC', pdir, prefix, num, sampling);
         
         [it.fullMotlName, it.fullMotlPre]  = nameOf('fm', pdir, prefix, num, sampling);
-        it.fullCfgName = nameOf('fc', pdir, prefix, num, sampling);
-        it.rawSumEM = nameOf('rse', pdir, prefix, num, sampling);
-        it.filtSumEM = nameOf('fse', pdir, prefix, num, sampling);
-        it.rawSumMRC = nameOf('rsm', pdir, prefix, num, sampling);
-        it.filtSumMRC = nameOf('fsm', pdir, prefix, num, sampling);
-        it.fscFigureName = nameOf('ffn', pdir, prefix, num, sampling);
+        it.fullCfgName = nameOf('fullCfg', pdir, prefix, num, sampling);
+        it.rawSumEM = nameOf('rawSum', pdir, prefix, num, sampling);
+        it.filtSumEM = nameOf('filtSum', pdir, prefix, num, sampling);
+        it.rawSumMRC = nameOf('rawSumMRC', pdir, prefix, num, sampling);
+        it.filtSumMRC = nameOf('filtSumMRC', pdir, prefix, num, sampling);
+        it.fscFigureName = nameOf('fscPlot', pdir, prefix, num, sampling);
         
         for i = 1:subiters+2
-            [it.motlNames{i, h}, it.motlPres{i, h}] = nameOf('m', pdir, prefix, [num, i], sampling, halfset);
-            [it.refNames{i, h}, it.refPres{i, h}] = nameOf('r', pdir, prefix, [num, i], sampling, halfset);
-            [it.refNSNames{i, h}, it.refNSPres{i, h}] = nameOf('rns', pdir, prefix, [num, i], sampling, halfset);
-            [it.cfgNames{i, h}, it.cfgPres{i, h}] = nameOf('c', pdir, prefix, [num, i], sampling, halfset);
+            [it.motlNames{i, h}, it.motlPres{i, h}] = nameOf('motl', pdir, prefix, [num, i], sampling, halfset);
+            [it.refNames{i, h}, it.refPres{i, h}] = nameOf('ref', pdir, prefix, [num, i], sampling, halfset);
+            [it.refNoSymNames{i, h}, it.refNoSymPres{i, h}] = nameOf('refNoSym', pdir, prefix, [num, i], sampling, halfset);
+            [it.cfgNames{i, h}, it.cfgPres{i, h}] = nameOf('cfg', pdir, prefix, [num, i], sampling, halfset);
         end
-        it.aliMaskNames{h} = nameOf('ama', pdir, prefix, num, sampling, halfset);
-        [~, it.wedgePre] = nameOf('w', pdir, prefix, num, sampling);
-        it.aliMotlName{h} = nameOf('m', pdir, prefix, num, sampling, halfset, 'Ali');
-        it.aliRefName{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'Ali');
-        it.aliRefNameSym{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'AliSym');
-        it.aliRefMRCName{h} = nameOf('rmrc', pdir, prefix, num, sampling, halfset, 'Ali');
-        it.aliRefMRCNameSym{h} = nameOf('rmrc', pdir, prefix, num, sampling, halfset, 'AliSym');
-        it.fscMotlName{h} = nameOf('m', pdir, prefix, num, sampling, halfset, 'FSC');
-        it.fscRefName{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'FSC');
-        it.fscRefNameSym{h} = nameOf('r', pdir, prefix, num, sampling, halfset, 'FSCSym');
+        it.aliMaskNames{h} = nameOf('aliMask', pdir, prefix, num, sampling, halfset);
+        [~, it.wedgePre] = nameOf('wedge', pdir, prefix, num, sampling);
+        it.aliMotlName{h} = nameOf('motl', pdir, prefix, num, sampling, halfset, 'Ali');
+        it.aliRefName{h} = nameOf('ref', pdir, prefix, num, sampling, halfset, 'Ali');
+        it.aliRefNameSym{h} = nameOf('ref', pdir, prefix, num, sampling, halfset, 'AliSym');
+        it.aliRefMRCName{h} = nameOf('refMRC', pdir, prefix, num, sampling, halfset, 'Ali');
+        it.aliRefMRCNameSym{h} = nameOf('refMRC', pdir, prefix, num, sampling, halfset, 'AliSym');
+        it.fscMotlName{h} = nameOf('motl', pdir, prefix, num, sampling, halfset, 'FSC');
+        it.fscRefName{h} = nameOf('ref', pdir, prefix, num, sampling, halfset, 'FSC');
+        it.fscRefNameSym{h} = nameOf('ref', pdir, prefix, num, sampling, halfset, 'FSCSym');
     end
 
     % Ensure the directory tree exists

@@ -9,7 +9,7 @@ function [pit, it] = prepareIteration(params, source, target)
     else
         idx = source;
     end
-    previousIterName = nameOf('i', p.projectDir, p.prefix{idx}, source);
+    previousIterName = nameOf('iter', p.projectDir, p.prefix{idx}, source);
     
     % Read iter struct
     res = load(previousIterName);
@@ -85,7 +85,7 @@ function [pit, it] = prepareIteration(params, source, target)
     
     % Prevent divergent orientations by band-limited avg of intial refs
     if p.bandLimAvg
-        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        pixRad = ceil(angst2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
         vol1 = emread(it.refNames{1, 1});
         vol2 = emread(it.refNames{1, 2});
         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);

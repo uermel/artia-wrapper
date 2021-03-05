@@ -1,4 +1,4 @@
-function [fullName, prefix] = nameOf(type, pdir ,pre, iters, sampling, halfset, quali)
+function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, quali)
     % type - type of file 
     % pre - iteration prefix
     % iters - main iteration and sub-iteration
@@ -8,69 +8,69 @@ function [fullName, prefix] = nameOf(type, pdir ,pre, iters, sampling, halfset, 
     
     % type of name
     switch type
-        case 'm' % motl
+        case 'motl' % motl old: m
             base = sprintf('motl/%s/bin%d/motl_%s', pre, sampling, halfset);
             
-        case 'r' % ref
+        case 'ref' % ref old: r
             base = sprintf('ref/%s/bin%d/ref_%s', pre, sampling, halfset);
             
-        case 'rns' % ref
+        case 'refNoSym' % ref old: rns
             base = sprintf('ref/%s/bin%d/ref_%s', pre, sampling, halfset);
             
-        case 'rmrc' % ref - mrc format
+        case 'refMRC' % ref - mrc format old: rmrc
             base = sprintf('ref/%s/bin%d/ref_%s', pre, sampling, halfset);
             
-        case 'c' % cfg
+        case 'cfg' % cfg old: c
             base = sprintf('cfg/%s/bin%d/cfg_%s', pre, sampling, halfset);
             
-        case 'i' % iter
+        case 'iter' % iter old: i
             base = sprintf('iter/%s/iter', pre);
             
-        case 'w' % wedge
+        case 'wedge' % wedge old: w
             base = sprintf('wedge/bin%d/wedge', sampling);
                         
-        case 'lma' % loose (spherical/cylindrical) mask
+        case 'looseMask' % loose (spherical/cylindrical) mask old: lma
             base = sprintf('mask/%s/bin%d/looseMask', pre, sampling);
             
-        case 'cma' % custom (user provided) mask
+        case 'customMask' % custom (user provided) mask old: cma
             base = sprintf('mask/%s/bin%d/customMask', pre, sampling);
             
-        case 'ccm' % custom (user provided) mask
+        case 'combinedMask' % custom (user provided) mask old: ccm
             base = sprintf('mask/%s/bin%d/combinedMask', pre, sampling);
             
-        case 'fma' % mask used for FSC calculation (based on sum of half sets)
+        case 'fscMask' % mask used for FSC calculation (based on sum of half sets) old: fma
             base = sprintf('mask/%s/bin%d/fscMask', pre, sampling);
             
-        case 'ama' % masks used for alignment
+        case 'aliMask' % masks used for alignment old: ama
             base = sprintf('mask/%s/bin%d/aliMask_%s', pre, sampling, halfset);   
                     
-        case 'mc' % maskCC
+        case 'maskCC' % maskCC old: mc
             base = sprintf('maskCC/%s/bin%d/maskCC', pre, sampling); 
         
-        case 'fm' % motl containing all particles
+        case 'fullMotl' % motl containing all particles old: fm
             base = sprintf('motl/%s/bin%d/full', pre, sampling);
             
-        case 'fc' % cfg for summing all particles
+        case 'fullCfg' % cfg for summing all particles old: fc
             base = sprintf('cfg/%s/bin%d/full', pre, sampling);
             
-        case 'rse' % raw sum of all particles (EM-format)
+        case 'rawSum' % raw sum of all particles (EM-format) old: rse
             base = sprintf('ref/%s/bin%d/rawSum', pre, sampling);
             
-        case 'fse' % sum of all particles filtered to resolution (EM-format)
+        case 'filtSum' % sum of all particles filtered to resolution (EM-format) old: fse
             base = sprintf('ref/%s/bin%d/filtSum', pre, sampling);
             
-        case 'rsm' % raw sum of all particles (MRC-format), contrast inv.
+        case 'rawSumMRC' % raw sum of all particles (MRC-format), contrast inv. old: rsm
             base = sprintf('ref/%s/bin%d/rawSum', pre, sampling);
             
-        case 'fsm' % sum of all particles filtered to resolution (MRC-format), contrast inv.
+        case 'filtSumMRC' % sum of all particles filtered to resolution (MRC-format), contrast inv. old: fsm
             base = sprintf('ref/%s/bin%d/filtSum', pre, sampling);
             
-        case 'ffn' % FSC plot
+        case 'fscPlot' % FSC plot old: ffn
             base = sprintf('fsc/%s/bin%d/FSC', pre, sampling);
             
     end
     
-    if strcmp(type, 'rns')
+    if strcmp(type, 'refNoSym')
         iterFmt = '%s_%d_noSymm_%d';
     else
         iterFmt = ['%s' repmat('_%d', 1, numel(iters))];
@@ -79,16 +79,41 @@ function [fullName, prefix] = nameOf(type, pdir ,pre, iters, sampling, halfset, 
     iterBase = sprintf(iterFmt, base, iters);
     prefix = [pdir sprintf(iterFmt, base, iters(1:end-1))];
     
+    emfiles = {'motl', ...
+               'ref', ...
+               'wedge', ...
+               'looseMask', ...
+               'customMask', ...
+               'combinedMask', ...
+               'aliMask', ...
+               'fscMask', ...
+               'maskCC', ...
+               'fullMotl', ...
+               'rawSum', ...
+               'filtSum', ...
+               'refNoSym'};
+           
+    mrcfiles = {'rawSumMRC', ...
+                'filtSumMRC', ...
+                'refMRC'};
+            
+    plots = {'fscPlot'};
+    
+    cfgs = {'cfg', ...
+            'fullCfg'};
+        
+    structs = {'iter'};
+            
     switch type
-        case {'m', 'r', 'w', 'lma', 'cma', 'ccm', 'ama', 'fma', 'mc', 'fm', 'rse', 'fse', 'rns'}
+        case emfiles
             ext = '.em';
-        case {'rsm', 'fsm', 'rmrc'}
+        case mrcfiles
             ext = '.mrc';
-        case 'ffn'
+        case plots
             ext = '.fig';
-        case {'c', 'fc'}
+        case cfgs
             ext = '.cfg';
-        case 'i'
+        case structs 
             ext = '.mat';
     end
 

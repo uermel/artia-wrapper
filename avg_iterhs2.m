@@ -122,7 +122,7 @@ function avg_iterhs2(params, target)
     
     % Prevent divergent orientations by band-limited avg of final refs
     if p.bandLimAvg
-        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        pixRad = ceil(angst2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
         vol1 = emread(it.aliRefName{1});
         vol2 = emread(it.aliRefName{2});
         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
@@ -158,8 +158,7 @@ function avg_iterhs2(params, target)
         emwrite(motls{h}, it.motlNames{1, h}); % this should be another temporary file
     end
     
-    % Re-extract and run AddParticles again
-    % extractWriteParts([motls{1} motls{2}], 1, p.tomoList, p.boxRad(1), 1, 1, 0, p.partPre);
+    % Run AddParticles again
     for h = 1:2
         cfgName = it.cfgNames{1, h};
         
@@ -167,57 +166,19 @@ function avg_iterhs2(params, target)
         cleanMPI(p.projectDir, it.pre, [target, 1], it.sampling, p.hsetNames{h});
         
         copyfile(it.refNames{1, h}, it.fscRefNameSym{h})
-        copyfile(it.refNSNames{1, h}, it.fscRefName{h})
+        copyfile(it.refNoSymNames{1, h}, it.fscRefName{h})
     end
     
     % Add all particles to get the full sum
     fullMotl = [motls{1} motls{2}];
     emwrite(fullMotl, it.fullMotlName)
-    
-%     %%% Prepare cfg for adding
-%     cfgName = it.fullCfgName;
-% 
-%     cfg.CudaDeviceID = '0 1 2 3';
-%     cfg.MotiveList = it.fullMotlPre;
-%     cfg.Reference = it.fullRefPre;
-%     cfg.WedgeFile = it.wedgePre;
-%     cfg.Particles = p.partPre;
-%     cfg.WedgeIndices = num2str(p.tomoNums);
-%     cfg.Classes = '';
-%     cfg.MultiReference = '';
-%     cfg.PathWin = '';
-%     cfg.PathLinux = '';
-%     cfg.Mask = it.maskName;
-%     cfg.MaskCC = it.maskCCName;
-%     cfg.NamingConvention = 'TomoParticle';
-%     cfg.StartIteration = num2str(j+1);
-%     cfg.EndIteration = num2str(j+2);
-%     cfg.AngIter = '0';
-%     cfg.AngIncr = '0';
-%     cfg.PhiAngIter = '0';
-%     cfg.PhiAngIncr = '0';
-%     cfg.LowPass = num2str(params.LowPass(target));
-%     cfg.HighPass = num2str(params.HighPass(target));
-%     cfg.Sigma = num2str(params.Sigma(target));
-%     cfg.ClearAngles = 'false';
-%     cfg.BestParticleRatio = '1';
-%     cfg.ApplySymmetry = 'false';
-%     cfg.CouplePhiToPsi = 'true';
-% 
-%     %%% Write cfg
-%     struct2cfg(cfg, cfgName);
-%     
-%     %%% Run AddParticles
-%     artia.mpi.run('AddParticles', 4, cfgName, 'execDir', p.STAMPI, 'runRemote', p.runRemote, 'remoteHost', p.remoteHost)
-%     %executeMPI(p.STAMPI, p.mpiOpts, 'AddParticles', cfgName, p.projectDir)
-%     %cleanMPI(p.projectDir, it.pre, [target, 1], it.sampling, p.hsetNames{h});
         
     % Compute FSC
     odd_sym = emread(it.fscRefNameSym{1});
     even_sym = emread(it.fscRefNameSym{2});
     odd = emread(it.fscRefName{1});
     even = emread(it.fscRefName{2});
-    tot = odd_sym + even_sym;
+    tot = (odd_sym + even_sym)./2;
     
     odd = odd - mean(odd(:));
     odd = odd ./ std(odd(:));

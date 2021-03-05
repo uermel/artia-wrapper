@@ -154,7 +154,7 @@ function p = avg_iniths(params)
     
     % Prevent divergent orientations by band-limited avg of final refs
     if p.bandLimAvg
-        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        pixRad = ceil(angst2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
         vol1 = emread(it.aliRefName{1});
         vol2 = emread(it.aliRefName{2});
         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
@@ -212,7 +212,7 @@ function p = avg_iniths(params)
     
     % Prevent divergent orientations by band-limited avg of transformed refs
     if p.bandLimAvg
-        pixRad = ceil(ang2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
+        pixRad = ceil(angst2pix(p.commonInfoThresh, p.angPix, p.boxDim(1)));
         vol1 = emread(it.fscRefName{1});
         vol2 = emread(it.fscRefName{2});
         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
@@ -223,7 +223,7 @@ function p = avg_iniths(params)
     % Compute FSC and masks
     odd = emread(it.fscRefName{1});
     even = emread(it.fscRefName{2});
-    tot = odd + even;
+    tot = (odd + even)./2;
     
     odd = odd - mean(odd(:));
     odd = odd ./ std(odd(:));
