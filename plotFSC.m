@@ -1,7 +1,25 @@
-function fi = plotFSC(res, names, boxSize, apix, text)
-    
+function fi = plotFSC(res, boxSize, apix, text)
+% plotFSC plots the result of FSC computations usig computeFSC. 
+%
+% Parameters:
+%   res (struct):
+%       Result struct from computeFSC
+%   boxSize (double[1]):
+%       Box size
+%   apix (double):
+%       Pixel size in angstrom
+%   text (string):
+%       Text for figure title
+%
+% Returns:
+%   fi (figure):
+%       Figure object
+% 
+% Author:
+%   UE, 2021
+
     % Additional title text
-    if nargin == 4
+    if nargin == 3
         text = '';
     else
         text = [', ' text];
@@ -22,23 +40,46 @@ function fi = plotFSC(res, names, boxSize, apix, text)
     xlim(ax, xl);
     ylim(ax, yl);
     plot(ax, [xl(1), xl(2)], [criterion, criterion], 'Color', [200, 200, 200]./255, 'LineStyle', '-.', 'HandleVisibility','off')
+    ticks = get(ax, 'xtick');
+    ticks = ticks(2:end);
+    aticks = 1./ticks;
+    set(ax, 'xtick', ticks);
+    set(ax, 'xticklabels', strsplit(num2str(round(aticks,2))));
     
     % Get colors
     cmap = colormap('lines');
     
+    % Get names
+    names = fieldnames(res.fsc);
+    
     % Plot FSCs
     for i = 1:numel(names)
         name = names{i};
-        r = res.res.ang.(name);
+        isPR = res.isPR.(name);
+        isTrue = res.isTrue.(name);
+        colorID = res.resultGroup.(name);
         
-        plot(ax, 1./steps, res.fsc.(name), 'Color', cmap(i, :))
         
-        if strcmp(name, 'tightPR')
+        
+        if isPR
+            plot(ax, 1./steps, res.fsc.(name), 'Color', cmap(colorID, :), 'LineStyle', ':')
+            name = strrep(name, '_', '\_');
             leg{end+1} = sprintf('%s', name);
-        else
-            color = cmap(i, :).*1.25;
+        elseif isTrue
+            plot(ax, 1./steps, res.fsc.(name), 'Color', cmap(colorID, :), 'LineWidth', 2)
+            r = res.res.ang.(name);
+            color = cmap(colorID, :).*1.25;
             color = color./max(color);
-            plot(ax, [1/r, 1/r], [criterion, yl(1)], 'Color', [cmap(i, :) 0.5], 'LineStyle', '-.', 'HandleVisibility','off')
+            plot(ax, [1/r, 1/r], [criterion, yl(1)], 'Color', [cmap(colorID, :) 0.5], 'LineStyle', '-.', 'HandleVisibility','off')
+            name = strrep(name, '_', '\_');
+            leg{end+1} = sprintf('%s: %.2f A', name, r);
+        else
+            plot(ax, 1./steps, res.fsc.(name), 'Color', cmap(colorID, :))
+            r = res.res.ang.(name);
+            color = cmap(colorID, :).*1.25;
+            color = color./max(color);
+            plot(ax, [1/r, 1/r], [criterion, yl(1)], 'Color', [cmap(colorID, :) 0.5], 'LineStyle', '-.', 'HandleVisibility','off')
+            name = strrep(name, '_', '\_');
             leg{end+1} = sprintf('%s: %.2f A', name, r);
         end
     end
@@ -50,5 +91,5 @@ function fi = plotFSC(res, names, boxSize, apix, text)
     % Labels
     legend(leg);
     ylabel('FSC');
-    xlabel('Resolution (1/A)');
+    xlabel('Resolution (A)');
 end

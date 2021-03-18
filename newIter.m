@@ -1,18 +1,55 @@
-function it = newIter(num, prefix, sampling, subiters, hsetNames, pdir)
+function it = newIter(params, num)
+%it = newIter(num, prefix, sampling, subiters, hsetNames, pdir)
+    
+    % Parameters
+    p = params;
+    
+    % Is initial iteration?
+    if num == 0
+        subiters = 1;
+        num = 0;
+        tempnum = 1;
+    else
+        subiters = p.refineIter(num);
+        tempnum = num;
+    end
+    
+    % Get and set values incluencing the names
+    prefix = p.prefix{tempnum};
+    sampling = p.sampling(tempnum);
+    hsetNames = p.hsetNames;
+    pdir = p.projectDir;
 
     % Make structure
     it = struct();
-    it.pre = prefix;
+    it.num = num;
+    it.prefix = prefix;
     it.sampling = sampling;
+    it.refineIters = subiters;
+    it.hsetNames = hsetNames;
     
-    % Init name arrays
-    it.looseMaskName = '';
-    it.customMaskName = '';
-    it.combinedMaskName = '';
-    it.fscMaskName = '';
-    it.maskCCName = '';
-    it.name = '';
+    % Subiteration-independent names
+    it.name = nameOf('iter', pdir, prefix, num, sampling);
     
+    it.looseMaskName = nameOf('looseMask', pdir, prefix, num, sampling);
+    it.customMaskName = nameOf('customMask', pdir, prefix, num, sampling);
+    it.combinedMaskName = nameOf('combinedMask', pdir, prefix, num, sampling);
+    it.fscMaskName = nameOf('fscMask', pdir, prefix, num, sampling);
+    it.maskCCName = nameOf('maskCC', pdir, prefix, num, sampling);
+    it.filterVolName = nameOf('filter', pdir, prefix, num, sampling);
+    
+    [it.fullMotlName, it.fullMotlPre]  = nameOf('fullMotl', pdir, prefix, num, sampling);
+    it.fullCfgName = nameOf('fullCfg', pdir, prefix, num, sampling);
+    it.rawSumEM = nameOf('rawSum', pdir, prefix, num, sampling);
+    it.filtSumEM = nameOf('filtSum', pdir, prefix, num, sampling);
+    it.rawSumMRC = nameOf('rawSumMRC', pdir, prefix, num, sampling);
+    it.filtSumMRC = nameOf('filtSumMRC', pdir, prefix, num, sampling);
+    it.fscFigureName = nameOf('fscPlot', pdir, prefix, num, sampling);
+    
+    it.wedgePre = sprintf('%s%s/wedge_', pdir, p.wedgeDir);
+    it.partPre = sprintf('%s%s/part_', pdir, p.particleDir);
+    
+    % Subiteration-dependent names
     it.motlNames = {};
     it.refNames = {};
     it.cfgNames = {};
@@ -22,41 +59,14 @@ function it = newIter(num, prefix, sampling, subiters, hsetNames, pdir)
     it.refPres = {};
     it.cfgPres = {};
     
-    it.wedgePre = '';
-    
     it.aliMotlNames = {};
     it.aliRefNames = {};
     it.fscMotlNames = {};
     it.fscRefNames = {};
     
-    it.fullMotlName = '';
-    it.fullCfgName = '';
-    it.fullMotlPre = '';
-        
-    it.rawSumEM = '';
-    it.filtSumEM = '';
-    it.rawSumMRC = '';
-    it.filtSumMRC = '';
-    it.fscFigureName = '';
-    
     % Make the names
-    it.name = nameOf('iter', pdir, prefix, num, sampling);
-    
     for h = 1:2
         halfset = hsetNames{h};
-        it.looseMaskName = nameOf('looseMask', pdir, prefix, num, sampling);
-        it.customMaskName = nameOf('customMask', pdir, prefix, num, sampling);
-        it.combinedMaskName = nameOf('combinedMask', pdir, prefix, num, sampling);
-        it.fscMaskName = nameOf('fscMask', pdir, prefix, num, sampling);
-        it.maskCCName = nameOf('maskCC', pdir, prefix, num, sampling);
-        
-        [it.fullMotlName, it.fullMotlPre]  = nameOf('fm', pdir, prefix, num, sampling);
-        it.fullCfgName = nameOf('fullCfg', pdir, prefix, num, sampling);
-        it.rawSumEM = nameOf('rawSum', pdir, prefix, num, sampling);
-        it.filtSumEM = nameOf('filtSum', pdir, prefix, num, sampling);
-        it.rawSumMRC = nameOf('rawSumMRC', pdir, prefix, num, sampling);
-        it.filtSumMRC = nameOf('filtSumMRC', pdir, prefix, num, sampling);
-        it.fscFigureName = nameOf('fscPlot', pdir, prefix, num, sampling);
         
         for i = 1:subiters+2
             [it.motlNames{i, h}, it.motlPres{i, h}] = nameOf('motl', pdir, prefix, [num, i], sampling, halfset);
@@ -73,7 +83,11 @@ function it = newIter(num, prefix, sampling, subiters, hsetNames, pdir)
         it.aliRefMRCNameSym{h} = nameOf('refMRC', pdir, prefix, num, sampling, halfset, 'AliSym');
         it.fscMotlName{h} = nameOf('motl', pdir, prefix, num, sampling, halfset, 'FSC');
         it.fscRefName{h} = nameOf('ref', pdir, prefix, num, sampling, halfset, 'FSC');
+        it.fscRefMRCName{h} = nameOf('refMRC', pdir, prefix, num, sampling, halfset, 'FSC');
         it.fscRefNameSym{h} = nameOf('ref', pdir, prefix, num, sampling, halfset, 'FSCSym');
+        it.fscRefMRCNameSym{h} = nameOf('refMRC', pdir, prefix, num, sampling, halfset, 'FSCSym');
+        
+        it.motlInputName{h} = nameOf('motl', pdir, prefix, num, sampling, halfset, 'Input');
     end
 
     % Ensure the directory tree exists
@@ -85,4 +99,6 @@ function it = newIter(num, prefix, sampling, subiters, hsetNames, pdir)
     eT(it.cfgPres{1, 1}, 0);
     eT(it.wedgePre, 0);
     eT(it.name, 0);
+    eT(it.partPre, 0);
+    eT(it.filterVolName, 0);
 end

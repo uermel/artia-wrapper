@@ -1,10 +1,54 @@
 function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, quali)
-    % type - type of file 
-    % pre - iteration prefix
-    % iters - main iteration and sub-iteration
-    % sampling - binning-level
-    % halfset - halfsetname
-    % quali - ?
+% nameOf returns the expected absolute path and name of files of an
+% artiatomi project.
+%
+% Parameters:
+%   type (char):
+%       Type of file. 
+%           'motl'          -   Halfset Motivelist
+%           'ref'           -   Halfset Average
+%           'refNoSym'      -   Halfset Average, not symmetrized
+%           'refMRC'        -   Halfset Average, MRC-Format
+%           'cfg'           -   cfg-file
+%           'iter'          -   iteration struct
+%           'wedge'         -   wedge file
+%           'looseMask'     -   ellipsoid or cylinder shaped masks
+%           'customMask'    -   user supplied mask
+%           'combinedMask'  -   combination of ellipsoid and user mask
+%           'fscMask'       -   mask used for FSC computation
+%           'aliMask'       -   mask used for alignment
+%           'maskCC'        -   correlation mask
+%           'fullMotl'      -   motive list both halfsets
+%           'fullCfg'       -   cfg both half sets
+%           'rawSum'        -   unfiltered sum
+%           'filtSum'       -   filtered sum
+%           'rawSumMRC'     -   unfiltered sum in MRC format
+%           'filtSumMRC'    -   filtered sum in MRC format
+%           'fscPlot'       -   figure object FSC plot
+%           'param'         -   parameter struct
+%
+%   pdir (char):
+%       Project directory path.
+%   pre (char):
+%       Prefix of that iteration
+%   iters (double[1]):
+%       Iteration number or iteration numbers (when there is a
+%       subiteration)
+%   sampling (double[1]):
+%       Binning of subtomograms
+%   halfset (char):
+%       name of the halfset
+%   quali (char):
+%       string qualifier
+%
+% Returns:
+%   fullName (char):
+%       absolute path to the file
+%   prefix (char):
+%       prefix to the file (without iteration and extension)
+% 
+% Author:
+%   UE, 2021
     
     % type of name
     switch type
@@ -68,6 +112,12 @@ function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, 
         case 'fscPlot' % FSC plot old: ffn
             base = sprintf('fsc/%s/bin%d/FSC', pre, sampling);
             
+        case 'param' % Parameter file
+            base = sprintf('params/%s_params', pre);
+            
+        case 'filter' % Filter volume
+            base = sprintf('filter/%s/bin%d/freqfilter', pre, sampling);
+            
     end
     
     if strcmp(type, 'refNoSym')
@@ -91,7 +141,8 @@ function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, 
                'fullMotl', ...
                'rawSum', ...
                'filtSum', ...
-               'refNoSym'};
+               'refNoSym', ...
+               'filter'};
            
     mrcfiles = {'rawSumMRC', ...
                 'filtSumMRC', ...
@@ -102,7 +153,8 @@ function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, 
     cfgs = {'cfg', ...
             'fullCfg'};
         
-    structs = {'iter'};
+    structs = {'iter', ...
+               'param'};
             
     switch type
         case emfiles
@@ -116,7 +168,6 @@ function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, 
         case structs 
             ext = '.mat';
     end
-
     
     if exist('quali') == 1
         fullFmt = '%s%s%s%s';
