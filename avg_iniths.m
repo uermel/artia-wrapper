@@ -156,7 +156,7 @@ function p = avg_iniths(params)
             it.LPdecay = 0;
         case {'gauss', 'cos', 'fsc'}
             filter = ones(it.boxDim);
-            emwrite(filter, it.filterVolName);
+            emwrite(fftshift(filter), it.filterVolName);
     end
     %%%%%%%%%%%%%%%%%%%% Filter Volume %%%%%%%%%%%%%%%%%%%%%%%
     
