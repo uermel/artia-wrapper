@@ -47,7 +47,12 @@ function it = newIter(params, num)
     it.fscFigureName = nameOf('fscPlot', pdir, prefix, num, sampling);
     
     it.wedgePre = sprintf('%s%s/wedge_', pdir, p.wedgeDir);
-    it.partPre = sprintf('%s%s/part_', pdir, p.particleDir);
+    
+    if p.externalParticles
+        it.partPre = sprintf('%spart_', sD(p.particleDir));
+    else
+        it.partPre = sprintf('%s%s/part_', pdir, p.particleDir);
+    end
     
     % Subiteration-dependent names
     it.motlNames = {};
@@ -99,6 +104,8 @@ function it = newIter(params, num)
     eT(it.cfgPres{1, 1}, 0);
     eT(it.wedgePre, 0);
     eT(it.name, 0);
-    eT(it.partPre, 0);
+    if ~p.externalParticles
+        eT(it.partPre, 0);
+    end
     eT(it.filterVolName, 0);
 end

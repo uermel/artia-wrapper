@@ -42,6 +42,7 @@ params.dosePerTilt =          3;
 params.particleRadius =       [100 100 100];
 %params.manualBoxDim =        false;
 %params.boxDimPix =           64;
+%params.externalParticles =   false;
 %params.particleDir =         'parts';
 %params.wedgeDir =            'wedge';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  

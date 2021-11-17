@@ -39,6 +39,7 @@ function params = paramcheck(params)
     defaults.particleRadius =       {'double',      3,          {},             'req'};
     defaults.manualBoxDim =         {'logical',     1,          {},             false};
     defaults.boxDimPix =            {'double',      1,          {},             64};
+    defaults.externalParticles =    {'logical',     1,          {},             false};
     defaults.particleDir =          {'char',        [],         {},             'parts'};
     defaults.wedgeDir =             {'char',        [],         {},             'wedge'};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
