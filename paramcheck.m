@@ -130,8 +130,8 @@ function params = paramcheck(params)
     defaults.useCustomMask =        {'double',      'iter',     {},             'req'};
     defaults.resetAngles =          {'double',      'iter',     {},             'req'};
     defaults.bestParticleRatio =    {'double',      'iter',     {},             'req'};
-    defaults.useCustomAngularScan = {'double',      'iter',     {},             'req'};
-    defaults.customAngScanFiles =   {'cell',        'iter',     {},             'req'};
+    defaults.useCustomAngularScan = {'double',      'iter',     {},             zeros([1, 100])};
+    defaults.customAngScanFiles =   {'cell',        'iter',     {},             cell(1, 100)};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     
     % Set up structure for consistency
@@ -184,9 +184,14 @@ function params = paramcheck(params)
         
         % Size check
         if ~isempty(defs.(names{i}).size)
-            if strcmp(defs.(names{i}).size, 'iter')
-                itersizes = [itersizes numel(params.(names{i}))];
-                iternames = [iternames names{i}];
+            if strcmp(defs.(names{i}).size, 'iter') % Check if iter 
+                if strcmp(defs.(names{i}).def, 'req') % Check if required
+                    itersizes = [itersizes numel(params.(names{i}))];
+                    iternames = [iternames names{i}];
+                elseif ~any(strcmp(defs.(names{i}).def, 'req')) && (numel(params.(names{i})) ~= numel(defs.(names{i}).def)) % Check if default present but changed
+                    itersizes = [itersizes numel(params.(names{i}))];
+                    iternames = [iternames names{i}];
+                end
             elseif max(size(params.(names{i}))) ~= defs.(names{i}).size
                 error('Parameter "%s" has %d elements, but can have a maximum of %d.', names{i}, max(size(params.(names{i}))), defs.(names{i}).size);
             end
