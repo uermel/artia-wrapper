@@ -15,12 +15,13 @@ params.orderList{1} = artia.util.dose_symmetric_tilts(20, 3, -1);
 params.skipExtract =          true;
 params.skipWedge =            false;
 params.doseWeight =           true;
+% params.startRef = '/home/uermel/achilleas_nisreen/testvol.em';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 % Compute params                
-%params.STAMPI =               '/home/Group/Share/EmSART_latest/v1.1/Artiatomi/build/';
+%params.STAMPI =               '/home/Group/Share/EmSART_latest/CustomAngularSampling/Artiatomi/build/';
 params.CHIMX =                '~/Programs/chimerax-1.0/bin/ChimeraX';
 %params.mpiNodes =             4
 %params.mpiHostfile =          '';
@@ -85,7 +86,7 @@ params.usePhaseCorr =          false;
 %params.couplePhiToPsi =       true;
 %params.freqFilterMode =       'cos';
 %params.fscFilterSource =      'auto';
-%params.bandPassUnits =        'pix';                                                         
+%params.bandPassUnits =        'pix';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
 
@@ -108,6 +109,17 @@ params.adaptiveLP =           [1 1 1 1 1 1 1 1 1 1];
 params.useCustomMask =        [0 0 0 0 0 0 0 0 0 0];
 params.resetAngles =          [1 1 1 1 1 0 0 0 0 0];
 params.bestParticleRatio =    [1 1 1 1 1 1 1 1 1 1];
+params.useCustomAngularScan = [0 0 0 0 0 0 0 0 0 0];
+params.customAngScanFiles =   {'', ...
+                               '', ...
+                               '', ...
+                               '', ...
+                               '', ...
+                               '', ...
+                               '', ...
+                               '', ...
+                               '', ...
+                               ''};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
 params = avg_iniths(params)

@@ -61,7 +61,9 @@ function p = avg_iniths(params)
     it.adaptiveLP = p.adaptiveLP(1);
     it.useCustomMask = p.useCustomMask(1);
     it.resetAngles = p.resetAngles(1);
-    it.bestParticleRatio = p.bestParticleRatio(1);    
+    it.bestParticleRatio = p.bestParticleRatio(1);
+    it.useCustomAngularScan = p.useCustomAngularScan(1);
+    it.customAngScanFile = p.customAngScanFiles{1};
     
     % Prepare half sets
     if ~p.usePresetHalfsets

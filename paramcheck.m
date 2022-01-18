@@ -18,7 +18,7 @@ function params = paramcheck(params)
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     % Compute params                % Type          % Size      % Allowed       % Default
-    defaults.STAMPI =               {'char',        [],         {},             '/home/Group/Share/EmSART_latest/v1.1/Artiatomi/build/'};
+    defaults.STAMPI =               {'char',        [],         {},             '/home/Group/Share/EmSART_latest/CustomAngularSampling/Artiatomi/build/'};
     defaults.CHIMX =                {'char',        [],         {},             'req'};
     defaults.mpiNodes =             {'double',      1,          {},             4};
     defaults.mpiHostfile =          {'char',        [],         {},             ''};
@@ -130,6 +130,8 @@ function params = paramcheck(params)
     defaults.useCustomMask =        {'double',      'iter',     {},             'req'};
     defaults.resetAngles =          {'double',      'iter',     {},             'req'};
     defaults.bestParticleRatio =    {'double',      'iter',     {},             'req'};
+    defaults.useCustomAngularScan = {'double',      'iter',     {},             'req'};
+    defaults.customAngScanFiles =   {'cell',        'iter',     {},             'req'};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     
     % Set up structure for consistency

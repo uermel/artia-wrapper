@@ -53,6 +53,8 @@ function [pit, it] = prepareIteration(params, source, target)
     it.useCustomMask = p.useCustomMask(target);
     it.resetAngles = p.resetAngles(target);
     it.bestParticleRatio = p.bestParticleRatio(target);
+    it.useCustomAngularScan = p.useCustomAngularScan(target);
+    it.customAngScanFile = p.customAngScanFiles{target};
     
     % Alignment radius
     if it.adaptiveLP

@@ -40,7 +40,7 @@ function cfgName = generate_cfg(params, iter, refIter, halfset)
     cfg.NamingConvention = 'TomoParticle';
     cfg.ClearAngles = 'false';
     cfg.BestParticleRatio = num2str(it.bestParticleRatio);
-    
+  
     % Angular scanning mode
     if p.couplePhiToPsi
         cfg.CouplePhiToPsi = 'true';
@@ -48,6 +48,12 @@ function cfgName = generate_cfg(params, iter, refIter, halfset)
         cfg.CouplePhiToPsi = 'false';
     end
     
+    % Angular range to check
+    if it.useCustomAngularScan
+        cfg.UseCustomAngles = 'true';
+        cfg.CustomAngleList = it.customAngScanFile;
+    end
+        
     % Correlation mode
     if p.usePhaseCorr
         cfg.CorrelationMethod = 'pc';
