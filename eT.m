@@ -11,7 +11,7 @@ function dir = eT(dir, includeLast)
         dir = [dir parts{i} '/'];
         
         if ~exist(dir, 'dir')
-           mkdir(dir)
+           mkdir(dir);
         end
     end
 end

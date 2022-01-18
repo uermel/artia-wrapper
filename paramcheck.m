@@ -12,6 +12,7 @@ function params = paramcheck(params)
     defaults.skipExtract =          {'logical',     1,          {},             true};
     defaults.skipWedge =            {'logical',     1,          {},             false};
     defaults.doseWeight =           {'logical',     1,          {},             false};
+    defaults.startRef =             {'char',        [],         {},             ''};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     
     

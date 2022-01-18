@@ -51,7 +51,7 @@ function it = newIter(params, num)
     if p.externalParticles
         it.partPre = sprintf('%spart_', sD(p.particleDir));
     else
-        it.partPre = sprintf('%s%s/part_', pdir, p.particleDir);
+        it.partPre = sprintf('%s%s/part_', pdir, 'parts');
     end
     
     % Subiteration-dependent names
