@@ -41,6 +41,7 @@ function p = avg_iniths(params)
         it.boxRad = it.boxDim./2;
     else % manually set box size
         it.boxDim = [p.boxDimPix p.boxDimPix p.boxDimPix];
+        it.boxRad = it.boxDim./2;
     end
     it.boxC = floor(it.boxDim/2) + 1;
     
