@@ -128,7 +128,6 @@ function p = avg_iniths(params)
     maskCC = ellipsoidMask(it.boxDim, pixRad, 0, it.boxC);
     maskCCName = it.maskCCName; 
     emwrite(maskCC, maskCCName);
-    
     %%%%%%%%%%%%%%%%%%%% Masking %%%%%%%%%%%%%%%%%%%%%%%
 
     
@@ -137,13 +136,21 @@ function p = avg_iniths(params)
     % Make wedges if necessary
     if ~params.skipWedge
 		for i = p.wedgeNums
-		    wedgeName = sprintf('%s%d.em', it.wedgePre, i);
-		    if p.doseWeight
-		        wedge = artia.wedge.dose_weighted(emread(p.markerList{i}), p.orderList{i}, p.dosePerTilt * 4, it.angPix, it.boxDim(1));
-		    else
-		        wedge = createWedge(it.boxDim, p.minAng{i}, p.maxAng{i});
-		    end
-		    emwrite(wedge, wedgeName);  
+		    wedgeCovName = sprintf('%s%d.em', it.wedgeCOVPre, i);
+            wedgeOvlName = sprintf('%s%d.em', it.wedgeOVLPre, i);
+            wedgeCTFName = sprintf('%s%d.em', it.wedgeCTFPre, i);
+% 		    if p.doseWeight
+% 		        wedge = artia.wedge.dose_weighted(emread(p.markerList{i}), p.orderList{i}, p.dosePerTilt * 4, it.angPix, it.boxDim(1));
+% 		    else
+% 		        wedge = createWedge(it.boxDim, p.minAng{i}, p.maxAng{i});
+% 		    end
+            wedgeCov = wedge_coverage(emread(p.markerList{i}), p.orderList{i}, p.dosePerTilt * 4, it.angPix, it.boxDim(1));
+            wedgeOvl = wedge_overlap(emread(p.markerList{i}), p.orderList{i}, p.dosePerTilt * 4, it.angPix, it.boxDim(1));
+            wedgeCTF = wedge_CTFsqr(emread(p.markerList{i}), p.orderList{i}, p.dosePerTilt * 4, it.angPix, it.boxDim(1), p.ctfList{i});
+            
+		    emwrite(wedgeCov, wedgeCovName);
+            emwrite(wedgeOvl, wedgeOvlName); 
+            emwrite(wedgeCTF, wedgeCTFName); 
         end
     end
     
@@ -170,8 +177,30 @@ function p = avg_iniths(params)
     it.phiAngIter(1) = p.PhiAngIter(1);
     it.phiAngIncr(1) = p.PhiAngIncr(1);
     %%%%%%%%%%%%%%%%%%%% Angular sampling %%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%%%%%%%%%%%%% SNR File %%%%%%%%%%%%%%%%%%%%%%%
+    % Initial assumed SNR
+    pixRad = ceil(angst2pix(p.commonInfoThresh, it.angPix, it.boxDim(1)));
+    pixC = it.boxC;
+    fsc = ellipsoidMask(it.boxDim, [pixRad, pixRad, pixRad], 5, pixC); % fake FSC
+    fsc = fsc(pixC:end, pixC(2), pixC(3));
+    fsc = fsc + 0.1;
+    fsc = fsc ./ max(fsc);
+    fsc = fsc - 0.0001;
+%     
+%     fsc(fsc < 0) = min(fsc(fsc > 0));
+%     fsc(fsc == 0) = min(fsc(fsc > 0));
+%     fsc(fsc > 0.99) = fsc(fsc > 0.99) - 0.01;
 
     
+    snr = fsc ./ (1 - fsc);
+    emwrite(snr, it.snrFileName);
+    %%%%%%%%%%%%%%%%%%%% SNR File %%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%%%%%%%%%%%%% T %%%%%%%%%%%%%%%%%%%%%%%
+    it.T = p.T;
+    %%%%%%%%%%%%%%%%%%%% T %%%%%%%%%%%%%%%%%%%%%%%
+
     %%%%%%%%%%%%%%%%%%%% Initial refs %%%%%%%%%%%%%%%%%%%%%%%
     % Add Particles
     for h = 1:2

@@ -117,6 +117,9 @@ function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, 
             
         case 'filter' % Filter volume
             base = sprintf('filter/%s/bin%d/freqfilter', pre, sampling);
+        
+        case 'SNR' % SNR file
+            base = sprintf('fsc/%s/bin%d/SNR', pre, sampling);
             
     end
     
@@ -142,7 +145,8 @@ function [fullName, prefix] = nameOf(type, pdir, pre, iters, sampling, halfset, 
                'rawSum', ...
                'filtSum', ...
                'refNoSym', ...
-               'filter'};
+               'filter', ...
+               'SNR'};
            
     mrcfiles = {'rawSumMRC', ...
                 'filtSumMRC', ...

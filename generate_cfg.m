@@ -18,9 +18,12 @@ function cfgName = generate_cfg(params, iter, refIter, halfset)
     % Input data
     cfg.MotiveList = it.motlPres{refIter+1, h};
     cfg.Reference = it.refPres{refIter+1, h};
-    cfg.WedgeFile = it.wedgePre;
+    cfg.CoverageWedgeFile = it.wedgeCOVPre;
+    cfg.OverlapWedgeFile = it.wedgeOVLPre;
+    cfg.CTFWedgeFile = it.wedgeCTFPre;
     cfg.Particles = it.partPre;
     cfg.MaskCC = it.maskCCName;
+    cfg.SNRFile = it.snrFileName;
     
     % Masking
     if it.useCustomMask
@@ -34,6 +37,7 @@ function cfgName = generate_cfg(params, iter, refIter, halfset)
     end
     
     % Global options
+    cfg.T = num2str(it.T);
     cfg.Classes = '';
     cfg.MultiReference = '';
     cfg.SingleWedge = 'false';

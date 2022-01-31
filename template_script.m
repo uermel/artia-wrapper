@@ -12,6 +12,9 @@ params.markerList{1} = '/example/marker.em';
 params.orderList = {};
 params.orderList{1} = artia.util.dose_symmetric_tilts(20, 3, -1);
 
+params.ctfList = {};
+params.ctfList{1} = '/example/ctf.em';
+
 params.skipExtract =          true;
 params.skipWedge =            false;
 params.doseWeight =           true;
@@ -87,6 +90,8 @@ params.usePhaseCorr =          false;
 %params.freqFilterMode =       'cos';
 %params.fscFilterSource =      'auto';
 %params.bandPassUnits =        'pix';
+%params.T =                    2;
+%params.SNRSource =            'loose';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
 

@@ -171,6 +171,16 @@ function [pit, it] = prepareIteration(params, source, target)
     end
     %%%%%%%%%%%%%%%%%%%% Angular sampling %%%%%%%%%%%%%%%%%%%%%%%
     
+    %%%%%%%%%%%%%%%%%%%% SNR File %%%%%%%%%%%%%%%%%%%%%%%
+    snr = computeSNR(pit.resolution, p.SNRSource);
+    emwrite(snr, it.snrFileName);
+    %%%%%%%%%%%%%%%%%%%% SNR File %%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%% T %%%%%%%%%%%%%%%%%%%%%%%
+    it.T = p.T;
+    %%%%%%%%%%%%%%%%%%%% T %%%%%%%%%%%%%%%%%%%%%%%
+
+    
     %%%%%%%%%%%%%%%%%%%% Create References %%%%%%%%%%%%%%%%%%%%%%%
     % Run AddParticles
     for h = 1:2 

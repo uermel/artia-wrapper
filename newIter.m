@@ -46,7 +46,11 @@ function it = newIter(params, num)
     it.filtSumMRC = nameOf('filtSumMRC', pdir, prefix, num, sampling);
     it.fscFigureName = nameOf('fscPlot', pdir, prefix, num, sampling);
     
-    it.wedgePre = sprintf('%s%s/wedge_', pdir, p.wedgeDir);
+    it.wedgeCOVPre = sprintf('%s%s/wedge_coverage_', pdir, p.wedgeDir);
+    it.wedgeOVLPre = sprintf('%s%s/wedge_overlap_', pdir, p.wedgeDir);
+    it.wedgeCTFPre = sprintf('%s%s/wedge_ctfsqr_', pdir, p.wedgeDir);
+    
+    it.snrFileName = nameOf('SNR', pdir, prefix, num, sampling);
     
     if p.externalParticles
         it.partPre = sprintf('%spart_', sD(p.particleDir));
@@ -102,7 +106,7 @@ function it = newIter(params, num)
     eT(it.motlPres{1, 1}, 0);
     eT(it.refPres{1, 1}, 0);
     eT(it.cfgPres{1, 1}, 0);
-    eT(it.wedgePre, 0);
+    eT(it.wedgeCOVPre, 0);
     eT(it.name, 0);
     if ~p.externalParticles
         eT(it.partPre, 0);

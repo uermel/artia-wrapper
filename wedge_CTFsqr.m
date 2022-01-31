@@ -1,0 +1,89 @@
+function [wedge] = wedge_CTFsqr(markerfile, tiltOrder, dosePerFrame, pixelsizeInA, volsize, ctfFile)
+% artia.wedge.dose_weighted creates exposure dose weighted wedge files using
+% the 3D tilt series alignment and tilt order. Tilt axis is y-axis.
+%
+% Parameters:
+%   markerfile (double[10xMxN]):
+%       3D tilt series alignment for M projections and N fiducials. Usually
+%       marker.ali from a markerfile struct.
+%   tiltOrder (double[M]):
+%       Tilt angles in order of acquisition.
+%   dosePerFrame (double):
+%       Dose per projection in e/A^2
+%   pixelsizeInA (double):
+%       Voxel size of the reconstruction
+%   volsize (double):
+%       Box size of the particle
+%
+% Returns:
+%   wedge (double[volsize x volsize x volsize]):
+%       The wedge file.
+%
+% Author:
+%   MK, UE, 2022
+
+    
+    % Read input files
+    markerfile = nameOrFile(markerfile, 'em');
+    ctfFile = nameOrFile(ctfFile, 'em');
+    
+    % Prep Vol
+    wedge = zeros(volsize, volsize, volsize);
+    thickness = 1.0;
+    
+    [xv, yv, zv] = ndgrid(0:volsize-1, 0:volsize-1, 0:volsize-1);
+    xvc = xv - volsize / 2;
+    yvc = yv - volsize / 2;
+    zvc = zv - volsize / 2;
+    
+    % Prep alignment
+    markerfile = markerfile(:,:,1);
+    
+    % Prep CTF
+    def1 = ctfFile(:, 2);
+    def2 = ctfFile(:, 3);
+    angle = ctfFile(:, 5);
+    const = ctfConstants(2.7, 300, pixelsizeInA, volsize);
+    
+    betafac = struct();
+    betafac.x = 0;
+    betafac.y = 0;
+    betafac.z = 0;
+    betafac.w = 0;
+    
+    [xx, yy] = ndgrid(0:volsize-1, 0:volsize-1);
+    xx = xx - floor(volsize/2);
+    yy = yy - floor(volsize/2);
+    
+    % Prep dose weighting
+    [~, tiltIdx] = sort(tiltOrder);
+    accumulatedDose = (0:max(size(tiltOrder,1),size(tiltOrder,2))-1) * dosePerFrame;
+    
+    % Create Wedge
+    for tilt = 1:max(size(tiltOrder,1),size(tiltOrder,2))
+        if (markerfile(2,tilt) >= 0)
+            tiltAngle = markerfile(1,tilt);
+            psiAngle = markerfile(10,tilt);
+            tiltAngle = tiltAngle / 180 * pi;
+            dose = accumulatedDose(tiltIdx(tilt));
+            xs = volsize * pixelsizeInA;
+            
+            % Should be correct order, see /home/uermel/EMPIAR-10304/data/CTFrefine_testing/ctf_wedge.m
+            ctfIm = ctfMK_full_corr(const, def1(tilt), def2(tilt), angle(tilt) + pi/2 - psiAngle, betafac);
+            ctfIm = ctfIm.^2;
+            F = griddedInterpolant(xx, yy, ctfIm, 'linear', 'nearest');
+            
+            % Compute wedge plane and add to wedge
+            posx = cos(tiltAngle) * xvc - sin(tiltAngle) * zvc;
+            posz = sin(tiltAngle) * xvc + cos(tiltAngle) * zvc;
+            
+            sel = posz < thickness & posz > -thickness;
+            %dist = ((posx / xs) * (posx / xs)) + ((posy / xs) * (posy / xs));
+            ctfVal = F(posx(sel), yvc(sel));
+            
+            weight = ctfVal;
+            wedge(sel) = wedge(sel) + weight;
+        end
+    end
+end
+

@@ -9,6 +9,7 @@ function params = paramcheck(params)
     defaults.tomoList =             {'cell',        [],         {},             'req'};
     defaults.markerList =           {'cell',        [],         {},             'req'};
     defaults.orderList =            {'cell',        [],         {},             'req'};
+    defaults.ctfList =              {'cell',        [],         {},             'req'};
     defaults.skipExtract =          {'logical',     1,          {},             true};
     defaults.skipWedge =            {'logical',     1,          {},             false};
     defaults.doseWeight =           {'logical',     1,          {},             false};
@@ -107,7 +108,12 @@ function params = paramcheck(params)
                                                                  'custom', ...
                                                                  'auto'},       'auto'};
     defaults.bandPassUnits =        {'char',        [],         {'pix', ...
-                                                                 'ang'},        'pix'};                                                         
+                                                                 'ang'},        'pix'};   
+    defaults.T =                    {'double',      1,          {},             2};
+    defaults.SNRSource =            {'char',        [],         {'unmasked', ...
+                                                                 'loose', ...
+                                                                 'custom', ...
+                                                                 'auto'},       'loose'};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     
     
