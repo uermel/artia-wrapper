@@ -165,8 +165,18 @@ function [pit, it] = prepareIteration(params, source, target)
             factor = 2.^j;
             it.angIncr(j+1) = p.AngIncr(target)/factor;
             it.angIter(j+1) = 1;
+	    if p.AngIter(target) == 0
+                it.angIter(j+1) = 0;
+            else
+                it.angIter(j+1) = 1;
+            end
             it.phiAngIncr(j+1) = p.PhiAngIncr(target)/factor;
             it.phiAngIter(j+1) = 1;
+	    if p.PhiAngIter(target) == 0
+                it.phiAngIter(j+1) = 0;
+            else
+                it.phiAngIter(j+1) = 1;
+            end
         end
     end
     %%%%%%%%%%%%%%%%%%%% Angular sampling %%%%%%%%%%%%%%%%%%%%%%%

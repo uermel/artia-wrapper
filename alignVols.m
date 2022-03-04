@@ -91,7 +91,8 @@ function transform = alignVols(vol, referenceVol, mask, apix, directory, CHIMX)
         
     % Save to struct.
     transform = struct();
-    transform.angles = artia.geo.matrix2euler(M);
+    [phi, psi, the] = mat2eul(M);
+    transform.angles = [phi, psi, the];
     transform.shifts = s./apix;
     
     % Done!
