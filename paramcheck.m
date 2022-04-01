@@ -18,7 +18,7 @@ function params = paramcheck(params)
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     % Compute params                % Type          % Size      % Allowed       % Default
-    defaults.STAMPI =               {'char',        [],         {},             '/home/Group/Share/EmSART_latest/CustomAngularSampling/Artiatomi/build/'};
+    defaults.STAMPI =               {'char',        [],         {},             '/home/Group/Share/EmSART_latest/CustomAngularSamplingFixedRotation/Artiatomi/build/'};
     defaults.CHIMX =                {'char',        [],         {},             'req'};
     defaults.mpiNodes =             {'double',      1,          {},             4};
     defaults.mpiHostfile =          {'char',        [],         {},             ''};
