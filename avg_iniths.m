@@ -256,13 +256,20 @@ function p = avg_iniths(params)
     end
     
     % Prevent divergent orientations by band-limited avg of transformed refs
-    if p.bandLimAvg
+    % If skipping halfsets, just average half sets
+    if p.bandLimAvg && ~p.skipHS
         pixRad = ceil(angst2pix(p.commonInfoThresh, it.angPix, it.boxDim(1)));
         vol1 = emread(it.fscRefName{1});
         vol2 = emread(it.fscRefName{2});
         [avol1, avol2] = bandLimAvg(vol1, vol2, pixRad);
         emwrite(avol1, it.fscRefName{1});
         emwrite(avol2, it.fscRefName{2});
+    elseif p.skipHS
+        vol1 = emread(it.aliRefName{1});
+        vol2 = emread(it.aliRefName{2});
+        avg = (vol1 + vol2)./2;
+        emwrite(avg, it.aliRefName{1});
+        emwrite(avg, it.aliRefName{2});
     end
     
     % Convert to MRC for user

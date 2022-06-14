@@ -94,6 +94,7 @@ function params = paramcheck(params)
                                                                  'auto'},       'loose'};
     defaults.useStartRef =          {'logical',     1,          {},             false};
     defaults.usePresetHalfsets =    {'logical',     1,          {},             false};
+    defaults.skipHS =               {'logical',     1,          {},             false};
     defaults.bandLimAvg =           {'logical',     1,          {},             true};
     defaults.commonInfoThresh =     {'double',      1,          {},             60};
     defaults.usePhaseCorr =         {'logical',     1,          {},             true};
