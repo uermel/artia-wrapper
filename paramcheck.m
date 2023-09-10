@@ -25,6 +25,7 @@ function params = paramcheck(params)
     defaults.runRemote =            {'logical',     1,          {},             true};
     defaults.remoteHost =           {'char',        [],         {},             'android.local'};
     defaults.deviceIDs =            {'char',        [],         {},             '0 1 2 3'};
+    defaults.condaEnvName =         {'char',        [],         {},             ''};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     
     

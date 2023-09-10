@@ -24,7 +24,7 @@ function mask = ellipseMask(dims, radius, sigma, center, steps, stepSize)
     a = radius(1);
     b = radius(2);
     bR = floor(dims/2);
-    [x, y] = meshgrid(-bR(1):bR(1)-1, -bR(2):bR(2)-1);
+    [x, y] = ndgrid(-bR(1):bR(1)-1, -bR(2):bR(2)-1);
     
     if sigma > 0
         % Gaussian for stepwise radius increase
@@ -36,7 +36,11 @@ function mask = ellipseMask(dims, radius, sigma, center, steps, stepSize)
         mask = zeros(dims);
         for j = 1:numel(v)
             i = vx(j);
-            el = 1 >= x.^2/(a+i).^2 + y.^2/(b+i).^2;
+            el = 1 >= x.^2./(a+i).^2 + y.^2./(b+i).^2;
+%             size(x)
+%             size(y)
+%             size(mask)
+%             size(el)
             cond = mask == 0 & el;
             mask(cond) = v(j);
         end

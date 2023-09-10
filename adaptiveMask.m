@@ -84,6 +84,7 @@ function mask = adaptiveMask(referenceFile, apix, threshold, dilationWidth, deca
         reff = normvol(reff, 'maskVol', mask);
         ref_binarized = reff < threshold;
     else
+        reff = ref;
         ref_binarized = ref;
     end
 

@@ -25,7 +25,7 @@ function mask = ellipsoidMask(dims, radius, sigma, center, steps, stepSize)
     b = radius(2);
     c = radius(3);
     bR = floor(dims/2);
-    [x, y, z] = meshgrid(-bR(1):bR(1)-1, -bR(2):bR(2)-1, -bR(3):bR(3)-1);
+    [x, y, z] = ndgrid(-bR(1):bR(1)-1, -bR(2):bR(2)-1, -bR(3):bR(3)-1);
     
     if sigma > 0
         % Gaussian for stepwise radius increase
